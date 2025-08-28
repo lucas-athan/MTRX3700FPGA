@@ -1,0 +1,63 @@
+# ==============================
+# Quartus Prime VHDL Project
+# DE1-SoC / DE2-SoC boards
+# ==============================
+
+# --- Build / compilation outputs ---
+db/
+incremental_db/
+greybox_tmp/
+qsys_edit/
+ip/
+ipshared/
+hps_isw_handoff/
+simulation/*
+
+# Reports / analysis outputs
+*.rpt
+*.summary
+*.smsg
+*.jdi
+*.eqn
+*.pof
+*.sof
+*.jic
+*.jam
+*.jbc
+*.map
+*.fit
+*.pin
+
+# --- Simulation artifacts ---
+*.vcd
+*.wlf
+*.vstf
+*.sdo
+*.sdf
+*.fsdb
+*.vo
+*.vho
+
+# --- Logs and temporary files ---
+*.log
+*.bak
+*.old
+*.orig
+*.tmp
+*.swp
+*~
+*.csv
+*.html
+*.qws   # Quartus GUI workspace settings (user-specific)
+
+# --- IDE / OS clutter ---
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Files to KEEP in Git
+# ==============================
+#   - VHDL source & testbenches (*.vhd, *.vhdl)
+#   - Constraint files (*.qsf, *.sdc)
+#   - Project file (*.qpf)
+#   - Any hand-written IP sources
