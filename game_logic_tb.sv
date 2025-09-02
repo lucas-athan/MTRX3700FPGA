@@ -155,7 +155,7 @@ module game_logic_tb;
     assert (dut.current_state == S0_Idle) else $fatal(1, "Did not return to Idle on reset");
     assert (points == 0) else $fatal(1, "Points not cleared by Idle logic");
     assert (ledx == 0 && ready_for_mole == 0 && timeout_start == 0);
-
+ 
     // Prep streak test
     press_start(); @(negedge clk);
     assert (dut.current_state == S1_Choose_Mole);

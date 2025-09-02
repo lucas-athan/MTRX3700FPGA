@@ -116,11 +116,16 @@ always_ff @(posedge clk) begin : whac_a_mole_fsm_ff
     end
 
     else if (current_state == S3_Hit) begin
-        if (concurrent > 10) begin
-            multiplier <= multiplier * 2;
+        if (concurrent >= 10) begin
+            multiplier = 2;
+            points     <= points + (multiplier * 1);
+            concurrent <= concurrent + 1;
         end
-        points     <= points + (multiplier * 1);
-        concurrent <= concurrent + 1;
+        else if (concurrent < 10) begin
+            multiplier <= 1;
+            points     <= points + (multiplier*1);
+            concurrent <= concurrent + 1;
+        end
     end
 
     else if (current_state == S4_Miss) begin
