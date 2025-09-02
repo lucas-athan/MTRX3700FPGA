@@ -29,9 +29,7 @@ The score is then displayed until the user hits the reset button.
 
 */
 
-module whac_a_mole_fsm # (
-
-) (
+module whac_a_mole_fsm (
     input               clk,
     input               start_button_pressed,         // Start button
     input               timeout,
@@ -74,11 +72,17 @@ initial current_state = S0_Idle;
 // Next State Logic
 always_comb begin : whac_a_mole_next_state_logic
     next_state = current_state;
-    unique case (current_state)
+    case (current_state)
 
-        S0_Idle:            next_state = (start_button_edge == 1) ? S1_Choose_Mole : S0_Idle;
+        S0_Idle: begin
+            if (start_button_edge) next_state = S1_Choose_Mole;
+            else                   next_state = S0_Idle;
+        end
 
-        S1_Choose_Mole:     next_state = (rng_ready == 1) ? S2_Wait_For_Hit : S1_Choose_Mole;
+        S1_Choose_Mole: begin
+            if (rng_ready)        next_state = S2_Wait_For_Hit;
+            else                  next_state = S1_Choose_Mole;
+        end
 
         S2_Wait_For_Hit: begin
             if (reset_button_edge == 1) begin
