@@ -31,22 +31,63 @@ The score is then displayed until the user hits the reset button.
 
 module whac_a_mole_fsm (
     input               clk,
-    input               start_button_pressed,         // Start button
     input               timeout,
-    input               reset_button_pressed,         // Reset button
     input               level_select,
-    input               [21:0] num_switch
+    input               [17:0] toggle_switches
+    input               [3:0]  key_switches
+    input               [3:0]  level_select
     input               [17:0] led_number
     output logic        ledx,
     output logic        ready_for_mole,
     output logic        timeout_start,
     output logic        [15:0] points
+    output logic        [1:0] level_number
 );
 
 // Internal values
 logic [8:0] concurrent;
 logic [3:0] multiplier; 
+logic switchx; 
+logic reset_button_pressed = 0;       // Reset button
+logic start_button_pressed = 0;
 
+
+// --- Level choose & start/reset requests from key_switches ---
+always_comb begin : level_choose_from_keys
+  // defaults
+  level_number          = 2'b00;
+  start_button_pressed  = 1'b0;
+  reset_button_pressed  = 1'b0;
+
+  unique case (key_switches)
+    4'b0000: begin
+      // RESET case
+      level_number         = 2'b00;
+      reset_button_pressed = 1'b1;
+      // start_button_pressed stays 0
+    end
+    4'b0010: begin
+      level_number         = 2'b01;
+      start_button_pressed = 1'b1;
+    end
+    4'b0100: begin
+      level_number         = 2'b10;
+      start_button_pressed = 1'b1;
+    end
+    4'b1000: begin
+      level_number         = 2'b11;
+      start_button_pressed = 1'b1;
+    end
+    default: begin
+      // no valid selection -> keep defaults
+      level_number         = 2'b00;
+    end
+  endcase
+end
+
+// --- Toggle switches vs LED number (assumes led_number is one-hot) ---
+assign switchx = |(toggle_switches & led_number);
+    
 // Start Button Synchroniser + rising edge detect 
 logic start_button, start_button_edge;
 always_ff @(posedge clk) begin : start_edge_detect
@@ -170,5 +211,6 @@ always_comb begin : whac_a_mole_fsm_output
 end
 
 endmodule
+
 
 
