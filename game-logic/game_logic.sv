@@ -34,7 +34,6 @@ module whac_a_mole_fsm (
     input               timeout,
     input               [17:0] toggle_switches
     input               [3:0]  key_switches
-    input               [3:0]  level_select
     input               [17:0] led_number
     output logic        ledx,
     output logic        ready_for_mole,
@@ -210,6 +209,7 @@ always_comb begin : whac_a_mole_fsm_output
 end
 
 endmodule
+
 
 
 
