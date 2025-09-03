@@ -2,49 +2,51 @@
 
 module timer #(
     parameter MAX_MS = 2047,            // Maximum millisecond value
-    parameter CLKS_PER_MS = 50000  // What is the number of clock cycles in a millisecond?
+    parameter CLKS_PER_MS = 50000 // What is the number of clock cycles in a millisecond?
 ) (
     input                       clk,
-    input                       reset,
-    input                       up,
-    input  [$clog2(MAX_MS)-1:0] start_value, // What does the $clog2() function do here?
+    input                 [1:0] level, // What does the $clog2() function do here?
     input                       enable,
-    output [$clog2(MAX_MS)-1:0] timer_value
+    output  [$clog2(MAX_MS)-1:0] timer_value
 );
+    reg [$clog2(CLKS_PER_MS)-1:0] count_cycles;
+    reg [$clog2(MAX_MS)-1:0]      count;
+    reg [$clog2(MAX_MS)-1:0] start_value;
 
-    // Your code here!
-    reg [$clog2(CLKS_PER_MS)-1:0] clk_counter;
-    reg [$clog2(MAX_MS)-1:0] ms_counter;
-    reg count_up;
+    assign timer_value = count;
 
-    assign timer_value = ms_counter;
-    
-    always @(posedge clk) begin
-        if (reset) begin
-            clk_counter <= 0;
-            if (up == 1) begin
-                ms_counter <= 0;
-                count_up <= 1;
-            end
-            else begin
-                ms_counter <= start_value;
-                count_up <= 0;
-            end
-        end
-        else if (enable) begin
-            if (clk_counter >= CLKS_PER_MS-1) begin
-                clk_counter <= 0;
-                if (count_up == 1) begin
-                    ms_counter <= ms_counter + 1;
-                end
-                else begin
-                    ms_counter <= ms_counter - 1;
-                end
-            end
-            else begin
-                clk_counter <= clk_counter + 1;
-            end
-        end
+    always @(*) begin
+        case (level)
+            2'd1:    start_value = 1000;    // 1 second
+            2'd2:    start_value = 500;   // 25 seconds
+            2'd3:    start_value = 250;  // 300 seconds
+            default: start_value = 1000;   // 30 seconds
+        endcase
     end
 
-endmodule
+    /* verilator lint_off SYNCASYNCNET */
+    always @(posedge clk) begin
+
+
+        if (enable == 0)  begin 
+            count <= start_value ;
+            count_cycles <=0 ;
+        end 
+
+        else if (enable && count != 0) begin 
+            count_cycles <= count_cycles + 1; 
+
+            if (count_cycles >= CLKS_PER_MS - 1 ) begin 
+                count_cycles <= 0; 
+                count <= count - 1;
+            end 
+        end 
+    end
+    /* verilator lint_on SYNCASYNCNET */
+endmodule 
+
+
+
+
+
+

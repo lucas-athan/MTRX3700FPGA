@@ -1,293 +1,102 @@
-// This top-level module is for the video on slide 5.4 :).
-
-//module top_level (
-//    input  [17:0] SW,
-//    output [6:0]  HEX0,
-//    output [6:0]  HEX1,
-//	 output [6:0]  HEX2,
-//    output [6:0]  HEX3
-//	 output [17:0] LEDR
-//);
-
-//    seven_seg seven_seg_u0 (
-//        .bcd(SW[3:0]),
-//        .segments(HEX0)
-//    );
-//
-//    seven_seg seven_seg_u1 (
-//        .bcd(SW[7:4]),
-//        .segments(HEX1)
-//    );
-//	 
-//	 seven_seg seven_seg_u2 (
-//        .bcd(SW[11:8]),
-//        .segments(HEX2)
-//    );
-//
-//    seven_seg seven_seg_u3 (
-//        .bcd(SW[15:12]),
-//        .segments(HEX3)
-//    );
-//	 switch_to_led switch_led_u0 (
-//        .switches(SW),
-//        .leds(LEDR)
-//    );
-
-
-//endmodule
-
-// This top-level module connects the timer and RNG modules
-// to control the LEDs.
-//
-//module top_level (
-//	input  [17:0] SW,
-//	input  CLOCK_50,
-//	output [17:0] LEDR
-//);
-//
-//    // Internal signals to connect modules
-//    wire [$clog2(2047)-1:0] timer_value;
-//    wire [$clog2(1223)-1:0] random_value;
-//    wire timer_enable_w;
-//    wire timer_reset_w;
-//
-//    // Connect SW[0] as an active-low reset for the system.
-//    wire reset_n = SW[0];
-//
-//    // Instantiate the timer module.
-//    // The timer is configured to count up (up=1) and is enabled by the control module.
-//    timer timer_u0 (
-//        .clk(CLOCK_50),
-//        .reset(timer_reset_w), // Controlled by random_led_sequencer
-//        .up(1'b1),
-//        .start_value(11'd0),
-//        .enable(timer_enable_w), // Controlled by random_led_sequencer
-//        .timer_value(timer_value)
-//    );
-//
-//    // Instantiate the RNG module.
-//    // The seed can be any non-zero value.
-//    rng rng_u0 (
-//        .clk(CLOCK_50),
-//        .random_value(random_value)
-//    );
-//
-//    // Instantiate the module that controls the sequence.
-//    random_led_sequencer sequence_u0 (
-//        .clk(CLOCK_50),
-//        .reset_n(reset_n),
-//        .timer_value(timer_value),
-//        .random_value(random_value),
-//        .leds(LEDR),
-//        .timer_enable(timer_enable_w),
-//        .timer_reset(timer_reset_w)
-//    );
-//
-//endmodule
-
-// This top-level module uses a push button to start and stop the
-// random LED sequence.
-//
-// This top-level module uses a push button to start and stop the
-// random LED sequence.
+`timescale 1ns/1ns
 
 module top_level (
-	input  [17:0] SW,
-	input  [3:0] KEY, // The DE2-115 has 4 push-buttons, we will use KEY[0]
-	input  CLOCK_50,
-	output [17:0] LEDR
+    input               clk,                // System clock
+    input       [17:0]  toggle_switches,    // Player switches
+    input       [3:0]   key_switches,       // Start/reset/level buttons
+    output      [17:0]  leds,               // LED outputs
+    output      [6:0]   seg,                // 7-segment display for points
+    output reg  [3:0]   an                   // 7-segment anodes (if multiplexed)
 );
 
-    // Internal signals to connect modules
-    wire [$clog2(2047)-1:0] timer_value;
-    wire [$clog2(1223)-1:0] random_value;
-    wire timer_enable_w;
-    wire timer_reset_w;
-
-    // Signal for the debounced button press
-    wire button_debounced;
-
-    // A register to hold the state of the sequence: enabled or disabled
-    reg sequence_enabled;
-    // A register to detect the rising edge of the debounced button
-    reg prev_button_debounced;
-
-    // Use a debounce module to handle button presses from KEY[0]
-    // The DE2-115 has a 50MHz clock, so a 50us delay requires 2500 counts (50us / 20ns).
-    debounce debounce_u0 (
-        .clk(CLOCK_50),
-        .button(~KEY[0]),
-        .button_pressed(button_debounced)
-    );
-
-    // Logic to toggle the sequence_enabled state on each button press
-    always @(posedge CLOCK_50) begin
-        // Detect a rising edge on the debounced button signal
-        if (button_debounced == 1'b1 && prev_button_debounced == 1'b0) begin
-            sequence_enabled <= ~sequence_enabled;
+    // -------------------------------
+    // Debounce start/reset/level buttons
+    // -------------------------------
+    wire [3:0] debounced_keys;
+    genvar i;
+    generate
+        for (i=0; i<4; i=i+1) begin : debounce_keys
+            debounce #(.DELAY_COUNTS(2500)) db_inst ( // example 50us debounce at 20ns clk
+                .clk(clk),
+                .button(key_switches[i]),
+                .button_pressed(debounced_keys[i])
+            );
         end
-        prev_button_debounced <= button_debounced;
-    end
+    endgenerate
 
-    // Instantiate the timer module.
-    // The timer is configured to count up (up=1).
-    timer timer_u0 (
-        .clk(CLOCK_50),
-        .reset(timer_reset_w), 
-        .up(1'b1),
-        .start_value(11'd0),
-        .enable(timer_enable_w),
-        .timer_value(timer_value)
-    );
-
-    // Instantiate the RNG module.
-    // The seed can be any non-zero value.
-    rng rng_u0 (
-        .clk(CLOCK_50),
+    // -------------------------------
+    // Random Number Generator
+    // -------------------------------
+    wire [$clog2(1223)-1:0] random_value;
+    rng #(
+        .OFFSET(200),
+        .MAX_VALUE(1223),
+        .SEED(1)
+    ) rng_inst (
+        .clk(clk),
         .random_value(random_value)
     );
 
-    // Instantiate the module that controls the sequence.
-    random_led_sequencer sequence_u0 (
-        .clk(CLOCK_50),
-        .reset_n(sequence_enabled), // The overall enable signal is now the reset for the sequencer
-        .timer_value(timer_value),
-        .random_value(random_value),
-        .leds(LEDR),
-        .timer_enable(timer_enable_w),
-        .timer_reset(timer_reset_w)
+    // -------------------------------
+    // Timer Module
+    // -------------------------------
+    wire [$clog2(2047)-1:0] timer_value;
+    wire timer_enable, timer_reset;
+    wire [1:0] level_number; // from FSM
+
+    timer #(
+        .MAX_MS(2047),
+        .CLKS_PER_MS(50000) // adjust according to your clock frequency
+    ) timer_inst (
+        .clk(clk),
+        .level(level_number),
+        .enable(timer_enable),
+        .timer_value(timer_value)
     );
 
+    // -------------------------------
+    // Whac-A-Mole FSM
+    // -------------------------------
+    wire [17:0] fsm_leds;
+    wire ready_for_mole, timeout_start;
+    wire [15:0] points;
+
+    whac_a_mole_fsm fsm_inst (
+        .clk(clk),
+        .timeout(timer_value == 0),
+        .toggle_switches(toggle_switches),
+        .key_switches(debounced_keys),
+        .led_number(fsm_leds),
+        .ledx(),              // optional: unused
+        .ready_for_mole(ready_for_mole),
+        .timeout_start(timer_enable),
+        .points(points),
+        .level_number(level_number)
+    );
+
+    // -------------------------------
+    // Switch to LED Validation
+    // -------------------------------
+    wire [17:0] valid_hit;
+    assign valid_hit = toggle_switches & fsm_leds;
+
+    // -------------------------------
+    // LED Output Logic
+    // -------------------------------
+    assign leds = fsm_leds; // Display currently active mole
+
+    // -------------------------------
+    // 7-Segment Display Logic (points)
+    // -------------------------------
+    // Example: just display the lowest 4 bits of points on a single 7-segment digit
+    seven_seg seg_inst (
+        .bcd(points[3:0]),
+        .segments(seg)
+    );
+
+    // Optional: simple single-digit anode enable
+    always @(posedge clk) begin
+        an <= 4'b1110; // activate first digit only
+    end
+
 endmodule
-
-// This top-level module uses a push button to start and stop the
-// random LED sequence and adds hit/miss game logic.
-
-//module top_level (
-//	input  [17:0] SW,
-//	input  [3:0] KEY, // The DE2-115 has 4 push-buttons, we will use KEY[0] and KEY[1]
-//	input  CLOCK_50,
-//    output [6:0]  HEX0,
-//    output [6:0]  HEX1,
-//	output [6:0]  HEX2,
-//    output [6:0]  HEX3,
-//	output [17:0] LEDR
-//);
-//
-//    // Internal signals to connect modules
-//    wire [$clog2(2047)-1:0] timer_value;
-//    wire [$clog2(1223)-1:0] random_value;
-//    wire timer_enable_w;
-//    wire timer_reset_w;
-//    wire [17:0] leds_from_sequencer;
-//    wire reset_sequencer_fsm;
-//
-//    // Score from the FSM
-//    wire [15:0] score;
-//    
-//    // Timer expired signal
-//    wire timer_expired;
-//    assign timer_expired = (timer_value >= 500);
-//
-//    // The KEY[0] is for start/stop. The KEY[1] is a game reset.
-//    wire start_stop_button_debounced;
-//    wire game_reset_button_debounced;
-//
-//    // Use a debounce module for the start/stop button
-//    debounce #(
-//        .DELAY_COUNTS(2499)
-//    ) debounce_start_stop (
-//        .clk(CLOCK_50),
-//        .button(~KEY[0]),
-//        .button_pressed(start_stop_button_debounced)
-//    );
-//
-//    // Use a debounce module for the game reset button
-//    debounce #(
-//        .DELAY_COUNTS(2499)
-//    ) debounce_game_reset (
-//        .clk(CLOCK_50),
-//        .button(~KEY[1]),
-//        .button_pressed(game_reset_button_debounced)
-//    );
-//
-//    // FSM to toggle the sequence on each button press
-//    reg prev_start_stop_debounced;
-//    reg sequence_enabled;
-//    always @(posedge CLOCK_50) begin
-//        // Detect a rising edge on the start/stop button signal
-//        if (start_stop_button_debounced == 1'b1 && prev_start_stop_debounced == 1'b0) begin
-//            sequence_enabled <= ~sequence_enabled;
-//        end
-//        prev_start_stop_debounced <= start_stop_button_debounced;
-//    end
-//    
-//    // The FSM controls the sequencer reset
-//    wire sequencer_reset_n = sequence_enabled & ~reset_sequencer_fsm;
-//
-//
-//    // Instantiate the timer module.
-//    timer timer_u0 (
-//        .clk(CLOCK_50),
-//        .reset(timer_reset_w), 
-//        .up(1'b1),
-//        .start_value(11'd0),
-//        .enable(timer_enable_w),
-//        .timer_value(timer_value)
-//    );
-//
-//    // Instantiate the RNG module.
-//    rng rng_u0 (
-//        .clk(CLOCK_50),
-//        .random_value(random_value)
-//    );
-//
-//    // Instantiate the random LED sequencer
-//    random_led_sequencer sequence_u0 (
-//        .clk(CLOCK_50),
-//        .reset_n(sequencer_reset_n),
-//        .timer_value(timer_value),
-//        .random_value(random_value),
-//        .leds(leds_from_sequencer),
-//        .timer_enable(timer_enable_w),
-//        .timer_reset(timer_reset_w)
-//    );
-//    
-//    // Instantiate the game controller FSM
-//    // Note: This instance is the SystemVerilog version
-//    fsm_test fsm_u0 (
-//        .clk(CLOCK_50),
-//        .reset_n(game_reset_button_debounced), // Use KEY[1] for game reset
-//        .switches(SW),
-//        .leds_from_sequencer(leds_from_sequencer),
-//        .timer_expired_in(timer_expired),
-//        .reset_sequencer_out(reset_sequencer_fsm),
-//        .score_out(score)
-//    );
-//
-//    // Assign LED outputs
-//    // LEDs are only lit if the sequence is enabled
-//    assign LEDR = sequence_enabled ? leds_from_sequencer : 18'b0;
-//
-//    // Instantiate seven-segment display drivers for the score
-//    seven_seg seven_seg_u0 (
-//        .bcd(score[3:0]),
-//        .segments(HEX0)
-//    );
-//
-//    seven_seg seven_seg_u1 (
-//        .bcd(score[7:4]),
-//        .segments(HEX1)
-//    );
-//	 
-//	 seven_seg seven_seg_u2 (
-//        .bcd(score[11:8]),
-//        .segments(HEX2)
-//    );
-//
-//    seven_seg seven_seg_u3 (
-//        .bcd(score[15:12]),
-//        .segments(HEX3)
-//    );
-//
-//endmodule
