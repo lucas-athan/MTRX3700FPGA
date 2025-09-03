@@ -1,9 +1,9 @@
 // score_display.v
 module score_display (
-    input  wire [7:0] SCORE,     // 0–255 from switches.v
+    input  wire [12:0] SCORE,     // 0–255 from switches.v
     output wire [6:0] HEX0,      // ones digit
     output wire [6:0] HEX1,      // tens digit
-    output wire [6:0] HEX2,      // hundreds digit
+    output wire [6:0] HEX2,      // hund digit
     output reg  [6:0] HEX3,      // 'E'
     output reg  [6:0] HEX4,      // 'R'
     output reg  [6:0] HEX5,      // 'O'
@@ -19,12 +19,12 @@ module score_display (
     // Split score into decimal digits
     reg [3:0] ones;
     reg [3:0] tens;
-    reg [3:0] hundreds;
+    reg [3:0] hund;
 
     always @(*) begin
-        ones     = SCORE % 10;
-        tens     = (SCORE / 10) % 10;
-        hundreds = (SCORE / 100) % 10;
+        ones = score [3:0];
+        tens = score [7:4];
+        hund = score [11:8];
 
         // Static "SCORE"
         HEX7 = 7'b0010010; // S
@@ -35,9 +35,9 @@ module score_display (
     end
 
     // Instantiate three 7-seg drivers
-    seven_seg seg0 (.bcd(ones),     .segments(hex0_segments));
-    seven_seg seg1 (.bcd(tens),     .segments(hex1_segments));
-    seven_seg seg2 (.bcd(hundreds), .segments(hex2_segments));
+    seven_seg seg0 (.bcd(ones), .segments(hex0_segments));
+    seven_seg seg1 (.bcd(tens), .segments(hex1_segments));
+    seven_seg seg2 (.bcd(hund), .segments(hex2_segments));
 
     assign HEX0 = hex0_segments;
     assign HEX1 = hex1_segments;

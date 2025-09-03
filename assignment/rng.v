@@ -21,6 +21,7 @@ module rng #(
 
     always @(*) begin
         case(level)
+            2'b00: number_of_cycles = LVL0;
             2'b01: number_of_cycles = LVL1;
             2'b10: number_of_cycles = LVL2;
             default: number_of_cycles = LVL0;

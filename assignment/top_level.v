@@ -1,18 +1,17 @@
 // For DE2-115
 module top_level (
-  input  wire clk,            // 50 MHz system clock
-  input  wire rst,            // reset
+  input  wire CLOCK_50,            // 50 MHz system clock
   input  wire [3:0]  KEY,     // Pushbuttons
   input  wire [17:0] SW,      // Board Switches
   output wire [17:0] LEDR,    // Red LEDs
   output wire [6:0] HEX0,     // Seven seg 0 segment values
   output wire [6:0] HEX1,     // Seven seg 1 segment values
   output wire [6:0] HEX2,     // Seven seg 2 segment values
-  output wire [6:0] HEX3,     // Seven seg 1 segment values
-  output wire [6:0] HEX4,     // Seven seg 2 segment values
-  output wire [6:0] HEX5,     // Seven seg 1 segment values
-  output wire [6:0] HEX6,     // Seven seg 2 segment values
-  output wire [6:0] HEX7      // Seven seg 2 segment values
+  output wire [6:0] HEX3,     // Seven seg 3 segment values
+  output wire [6:0] HEX4,     // Seven seg 4 segment values
+  output wire [6:0] HEX5,     // Seven seg 5 segment values
+  output wire [6:0] HEX6,     // Seven seg 6 segment values
+  output wire [6:0] HEX7      // Seven seg 7 segment values
 );
 
   wire [4:0] rand_index;      // Dummy variable: for LED index
@@ -21,14 +20,15 @@ module top_level (
 
   wire [17:0] led_from_leds;  // raw LEDs from leds.v
   wire [17:0] led_final;      // LEDs after switch logic
-  wire [7:0]  score;          // player score
+  wire [11:0] score;          // player score
 
-  wire but1, but2, but3;      // Wires for debounced button signals
+  wire rst, but1, but2, but3;      // Wires for debounced button signals
 
   // Debounce Buttons
-  debounce db1 (.clk(clk), .button(~KEY[1]), .button_pressed(but1));
-  debounce db2 (.clk(clk), .button(~KEY[2]), .button_pressed(but2));
-  debounce db3 (.clk(clk), .button(~KEY[3]), .button_pressed(but3));
+  debounce db0 (.clk(CLOCK_50), .button(~KEY[0]), .button_pressed(rst));
+  debounce db1 (.clk(CLOCK_50), .button(~KEY[1]), .button_pressed(but1));
+  debounce db2 (.clk(CLOCK_50), .button(~KEY[2]), .button_pressed(but2));
+  debounce db3 (.clk(CLOCK_50), .button(~KEY[3]), .button_pressed(but3));
 
   // Difficulty logic
   always @(posedge clk) begin
@@ -40,7 +40,7 @@ module top_level (
 
   // RNG module
   rng rng_inst (
-    .clk(clk),
+    .clk(CLOCK_50),
     .rst(rst),
     .level(difficulty),
     .led_index(rand_index),
@@ -49,7 +49,7 @@ module top_level (
 
   // LED timer controller
   leds leds_inst (
-    .clk(clk),
+    .clk(CLOCK_50),
     .rst(rst),
     .led_index(rand_index),
     .led_request(rand_request),
@@ -58,7 +58,7 @@ module top_level (
 
   // Switch Logic
   switches switches_inst (
-    .clk(clk),
+    .clk(CLOCK_50),
     .rst(rst),
     .led_in(led_from_leds),
     .sw(SW),
@@ -66,11 +66,11 @@ module top_level (
     .score(score)
   );
 
-  assign LEDR = led_final;
+  assign LEDR = game_on ? led_final : 18'b0;
 
   // Score
   score_display score_inst (
-    .SCORE(score),
+    .SCORE(game_on ? score : 8'd0),
     .HEX0(HEX0),
     .HEX1(HEX1),
     .HEX2(HEX2),

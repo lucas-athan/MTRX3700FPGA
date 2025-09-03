@@ -5,7 +5,7 @@ module switches (
     input  wire [17:0] led_in,      // LED pattern from leds.v
     input  wire [17:0] sw,          // physical switches SW[17:0]
     output reg  [17:0] led_out,     // updated LED pattern (after hits)
-    output reg  [7:0]  score        // score counter (0–255 for now)
+    output reg  [11:0] score        // score counter (0–255 for now)
 );
 
     integer i;
@@ -25,7 +25,7 @@ module switches (
             for (i = 0; i < 18; i = i + 1) begin
                 if (led_in[i] && sw[i] && !sw_prev[i]) begin
                     led_out[i] <= 1'b0;   // "hit" -> turn off LED
-                    score      <= score + 1;
+                    score      <= score + 2'b01;
                 end
             end
 

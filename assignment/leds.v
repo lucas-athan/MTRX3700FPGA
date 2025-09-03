@@ -2,7 +2,7 @@
 module leds #(
     parameter CLK_PERIOD_NS = 50,
     parameter LED_COUNT     = 18,
-    parameter ON_TIME_SEC   = 5
+    parameter ON_TIME_SEC   = 10
 )(
     input  wire              clk,
     input  wire              rst,
