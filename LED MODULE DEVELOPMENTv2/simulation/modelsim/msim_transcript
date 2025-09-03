@@ -12,42 +12,84 @@
 # 
 # vlog -vlog01compat -work work +incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED\ MODULE\ DEVELOPMENTv2 {C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/LEDModule2.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 12:10:38 on Sep 03,2025
+# Start time: 14:26:41 on Sep 03,2025
 # vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2" C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/LEDModule2.v 
 # -- Compiling module led_output
 # 
 # Top level modules:
 # 	led_output
-# End time: 12:10:38 on Sep 03,2025, Elapsed time: 0:00:00
+# End time: 14:26:41 on Sep 03,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vlog -vlog01compat -work work +incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED\ MODULE\ DEVELOPMENTv2 {C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/clock2.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 12:10:38 on Sep 03,2025
+# Start time: 14:26:41 on Sep 03,2025
 # vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2" C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/clock2.v 
 # -- Compiling module clock_1s
 # 
 # Top level modules:
 # 	clock_1s
-# End time: 12:10:38 on Sep 03,2025, Elapsed time: 0:00:00
+# End time: 14:26:41 on Sep 03,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vlog -vlog01compat -work work +incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED\ MODULE\ DEVELOPMENTv2 {C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/rng2.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 12:10:38 on Sep 03,2025
+# Start time: 14:26:41 on Sep 03,2025
 # vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2" C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/rng2.v 
 # -- Compiling module rng_lfsr
 # 
 # Top level modules:
 # 	rng_lfsr
-# End time: 12:10:38 on Sep 03,2025, Elapsed time: 0:00:00
+# End time: 14:26:42 on Sep 03,2025, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 # vlog -vlog01compat -work work +incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED\ MODULE\ DEVELOPMENTv2 {C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/top_level.v}
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 12:10:38 on Sep 03,2025
+# Start time: 14:26:42 on Sep 03,2025
 # vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2" C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/top_level.v 
 # -- Compiling module top_level
 # 
 # Top level modules:
 # 	top_level
-# End time: 12:10:38 on Sep 03,2025, Elapsed time: 0:00:00
+# End time: 14:26:42 on Sep 03,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # 
+# vlog -vlog01compat -work work +incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED\ MODULE\ DEVELOPMENTv2 {C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/top_level_tb.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 14:26:42 on Sep 03,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2" C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/top_level_tb.v 
+# -- Compiling module tb_top_level
+# 
+# Top level modules:
+# 	tb_top_level
+# End time: 14:26:42 on Sep 03,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L cyclonev_ver -L cyclonev_hssi_ver -L cyclonev_pcie_hip_ver -L rtl_work -L work -voptargs="+acc"  top_level_tb
+# vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L cyclonev_ver -L cyclonev_hssi_ver -L cyclonev_pcie_hip_ver -L rtl_work -L work -voptargs=""+acc"" top_level_tb 
+# Start time: 14:26:42 on Sep 03,2025
+# ** Error: (vsim-3170) Could not find 'top_level_tb'.
+#         Searched libraries:
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/altera
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/220model
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/sgate
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/altera_mf
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/altera_lnsim
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/cyclonev
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/cyclonev_hssi
+#             C:/intelFPGA_lite/20.1/modelsim_ase/altera/verilog/cyclonev_pcie_hip
+#             C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/simulation/modelsim/rtl_work
+#             C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/simulation/modelsim/rtl_work
+# Error loading design
+# Error: Error loading design
+#        Pausing macro execution
+# MACRO ./LEDModule2_run_msim_rtl_verilog.do PAUSED at line 15
+vsim <top_level>
+# vsim <top_level> 
+# Start time: 14:26:42 on Sep 03,2025
+# ** Error: (vsim-3170) Could not find '<top_level>'.
+#         Searched libraries:
+#             C:/Users/lucas/Downloads/MTRX3700/MTRX3700FPGA/LED MODULE DEVELOPMENTv2/simulation/modelsim/rtl_work
+# Error loading design
+# Error: Error loading design
+#        Pausing macro execution
+# MACRO ./LEDModule2_run_msim_rtl_verilog.do PAUSED at line 15
+# End time: 14:29:13 on Sep 03,2025, Elapsed time: 0:02:31
+# Errors: 2, Warnings: 0
