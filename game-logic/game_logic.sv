@@ -36,7 +36,6 @@ module whac_a_mole_fsm (
     input               reset_button_pressed,         // Reset button
     input               level_select,
     input               switchx,
-    input               rng_ready,
     output logic        ledx,
     output logic        ready_for_mole,
     output logic        timeout_start,
@@ -80,8 +79,7 @@ always_comb begin : whac_a_mole_next_state_logic
         end
 
         S1_Choose_Mole: begin
-            if (rng_ready)        next_state = S2_Wait_For_Hit;
-            else                  next_state = S1_Choose_Mole;
+            next_state = S2_Wait_For_Hit;
         end
 
         S2_Wait_For_Hit: begin
@@ -144,10 +142,14 @@ always_comb begin : whac_a_mole_fsm_output
 
     if (current_state == S1_Choose_Mole) begin
         ready_for_mole = 1;
+        ledx = 0;
+        timeout_start = 0;
     end
 
+    
+
     else if (current_state == S2_Wait_For_Hit) begin
-        ledx = 1;
+        ledx = 1; 
         timeout_start = 1;
         ready_for_mole = 0;
     end
