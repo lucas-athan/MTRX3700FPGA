@@ -19,9 +19,8 @@ module rng #(
     reg [31:0] cycle_counter;           // Counter for when to send random number
     reg [31:0] number_of_cycles;        // Number of cycles to count too
 
-    always @(*) begin
+    always @(posedge clk) begin
         case(level)
-            2'b00: number_of_cycles = LVL0;
             2'b01: number_of_cycles = LVL1;
             2'b10: number_of_cycles = LVL2;
             default: number_of_cycles = LVL0;

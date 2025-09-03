@@ -31,7 +31,7 @@ module top_level (
   debounce db3 (.clk(CLOCK_50), .button(~KEY[3]), .button_pressed(but3));
 
   // Difficulty logic
-  always @(posedge clk) begin
+  always @(posedge CLOCK_50) begin
     if (rst)       difficulty <= 2'b00;
     else if (but1) difficulty <= 2'b00;
     else if (but2) difficulty <= 2'b01;

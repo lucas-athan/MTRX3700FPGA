@@ -22,9 +22,9 @@ module score_display (
     reg [3:0] hund;
 
     always @(*) begin
-        ones = score [3:0];
-        tens = score [7:4];
-        hund = score [11:8];
+        ones = SCORE [3:0];
+        tens = SCORE [7:4];
+        hund = SCORE [11:8];
 
         // Static "SCORE"
         HEX7 = 7'b0010010; // S

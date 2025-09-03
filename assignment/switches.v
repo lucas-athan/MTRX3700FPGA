@@ -25,7 +25,7 @@ module switches (
             for (i = 0; i < 18; i = i + 1) begin
                 if (led_in[i] && sw[i] && !sw_prev[i]) begin
                     led_out[i] <= 1'b0;   // "hit" -> turn off LED
-                    score      <= score + 2'b01;
+                    score      <= score + 1;
                 end
             end
 

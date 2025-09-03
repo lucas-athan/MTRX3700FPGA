@@ -36,16 +36,14 @@ module leds #(
         else begin
             // Each cycle decrement active LED counters
             for (i = 0; i < LED_COUNT; i = i + 1) begin
-                if (counters[i] > 0) begin
+                if (counters[i] > 0)
                     counters[i] <= counters[i] - 1;
-                end
             end
 
             // Handle new request: If LED is turned on start counter but only if counter is 0 (not already on)
-            if (led_request && (led_index < LED_COUNT)) begin
+            if (led_request && (led_index < LED_COUNT))
                 if (counters[led_index] == 0) begin  // Check an existing timer isn't running
                     counters[led_index] <= CYCLES;   // load 5s timer
-                end
             end
         end
     end
