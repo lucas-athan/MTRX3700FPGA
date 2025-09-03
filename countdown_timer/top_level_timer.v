@@ -11,7 +11,7 @@ module top_level (
         .clk(clk),
         .rst(rst),
         .one_second_pulse(one_second_pulse)
-    )
+    );
 
     display_timer display_timer_inst (
         .clk(clk),
