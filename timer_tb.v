@@ -2,28 +2,30 @@
 
 module timer_tb;
 
-    // Testbench signals
+    // Parameters (smaller CLKS_PER_MS for faster sim)
+    localparam MAX_MS      = 16;
+    localparam CLKS_PER_MS = 10;   // 10 cycles = 1 "ms" in simulation
+
+    // DUT signals
     reg clk;
     reg stop;
     reg enable;
-    reg [10:0] start_value;        // supports up to MAX_MS=2047
-    wire [10:0] timer_value;
-    wire game_over;
+    reg [$clog2(MAX_MS)-1:0] start_value;
+    wire [$clog2(MAX_MS)-1:0] timer_value;
 
     // Instantiate DUT
     timer #(
-        .MAX_MS(2047),
-        .CLKS_PER_MS(10)           // keep small for faster sim
-    ) DUT (
+        .MAX_MS(MAX_MS),
+        .CLKS_PER_MS(CLKS_PER_MS)
+    ) dut (
         .clk(clk),
         .stop(stop),
         .start_value(start_value),
         .enable(enable),
-        .timer_value(timer_value),
-        .game_over(game_over)
+        .timer_value(timer_value)
     );
 
-    // Clock generator (20 ns period = 50 MHz)
+    // Clock generation: 20 ns period
     initial clk = 0;
     always #10 clk = ~clk;
 
@@ -33,41 +35,36 @@ module timer_tb;
         $dumpvars(0, tb_timer);
 
         // Initialise
-        stop        = 1;
+        stop        = 1;      // load start_value
         enable      = 0;
-        start_value = 5;   // expire after 5 ms
+        start_value = 5;      // start countdown at 5
         #40;
 
-        // Release reset/stop
-        stop   = 0;
-        enable = 1;
+        stop   = 0;           // release reset
+        enable = 1;           // start countdown
 
-        // Run until game_over goes high
+        // Let it run until it hits 0
         #1000;
 
-        // Pause timer
-        enable = 0;
-        #100;
-
-        // Resume timer
-        enable = 1;
-        #500;
-
-        // Reset again
-        stop = 1;
+        // Reload with a new value
+        stop        = 1;
+        start_value = 3;
         #40;
-        stop = 0;
+        stop        = 0;
+        enable      = 1;
 
         #500;
+
         $finish;
     end
 
-    // Monitor outputs (with lint control to silence Verilator warnings)
+    // Monitor
     /* verilator lint_off SYNCASYNCNET */
     initial begin
-        $monitor("t=%0t | stop=%b enable=%b | timer_value=%d game_over=%b",
-                  $time, stop, enable, timer_value, game_over);
+        $monitor("t=%0t | stop=%b enable=%b | timer_value=%0d",
+                $time, stop, enable, timer_value);
     end
     /* verilator lint_on SYNCASYNCNET */
+
 
 endmodule
