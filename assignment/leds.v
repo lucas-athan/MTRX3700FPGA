@@ -2,7 +2,7 @@
 module leds #(
     parameter CLK_PERIOD_NS = 50,
     parameter LED_COUNT     = 18,
-    parameter ON_TIME_SEC   = 10
+    parameter ON_TIME_SEC   = 5
 )(
     input  wire              clk,
     input  wire              rst,
@@ -36,14 +36,16 @@ module leds #(
         else begin
             // Each cycle decrement active LED counters
             for (i = 0; i < LED_COUNT; i = i + 1) begin
-                if (counters[i] > 0)
+                if (counters[i] > 0) begin
                     counters[i] <= counters[i] - 1;
+                end
             end
 
             // Handle new request: If LED is turned on start counter but only if counter is 0 (not already on)
             if (led_request && (led_index < LED_COUNT)) begin
-                if (counters[led_index] == 0)       // Check an existing timer isn't running
-                    counters[led_index] <= CYCLES;  // load 5s timer
+                if (counters[led_index] == 0) begin  // Check an existing timer isn't running
+                    counters[led_index] <= CYCLES;   // load 5s timer
+                end
             end
         end
     end
