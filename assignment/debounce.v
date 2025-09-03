@@ -1,4 +1,4 @@
-// Button Debouncing
+// debounce.v
 module debounce #(
     parameter DELAY_COUNTS = 2500 // 50us with clk=20ns
 )(

@@ -1,3 +1,4 @@
+// leds.v
 module leds #(
     parameter CLK_PERIOD_NS = 50,
     parameter LED_COUNT     = 18,

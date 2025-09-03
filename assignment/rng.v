@@ -1,21 +1,19 @@
-// Feedback polynomial x^5 + x^3 + 1
-
+// rng.v
 module rng #(
-    parameter LED_COUNT = 18
-    parameter SEED = 10
-    parameter LVL0 = 50_000_000  // 2.5s
-    parameter LVL1 = 20_000_000  // 1s 
+    parameter LED_COUNT = 18,
+    parameter SEED = 5'b01010,
+    parameter LVL0 = 50_000_000,  // 2.5s
+    parameter LVL1 = 20_000_000,  // 1s 
     parameter LVL2 = 10_000_000  // 0.5s
 )(
     input  wire clk,
     input  wire rst,
-    input  wire [1:0] level,   // 00 -> LVL0, 01 -> LVL1, 01 -> LVL2
+    input  wire [1:0] level,   // 00 -> LVL0, 01 -> LVL1, 10 -> LVL2
     output reg  [$clog2(LED_COUNT)-1:0] led_index,
     output reg  led_request
 );
     // 5-bit LFSR
     reg [4:0] lfsr;  // seed = 10 (must not be zero)
-    initial lfsr = SEED;
     wire feedback = lfsr[4] ^ lfsr[2];  // Feedback
 
     reg [31:0] cycle_counter;           // Counter for when to send random number

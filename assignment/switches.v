@@ -16,7 +16,8 @@ module switches (
             score    <= 0;
             led_out  <= 18'b0;
             sw_prev  <= 18'b0;
-        end else begin
+        end
+        else begin
             // start with LED state from leds.v
             led_out <= led_in;
 
@@ -24,7 +25,7 @@ module switches (
             for (i = 0; i < 18; i = i + 1) begin
                 if (led_in[i] && sw[i] && !sw_prev[i]) begin
                     led_out[i] <= 1'b0;   // "hit" -> turn off LED
-                    score      <= score + 1'b1;
+                    score      <= score + 1;
                 end
             end
 
