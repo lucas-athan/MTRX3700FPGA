@@ -5,7 +5,6 @@ module timer #(
     parameter CLKS_PER_MS = 50000 // What is the number of clock cycles in a millisecond?
 ) (
     input                       clk,
-    input                       stop,
     input  [$clog2(MAX_MS)-1:0] start_value, // What does the $clog2() function do here?
     input                       enable,
     output  [$clog2(MAX_MS)-1:0] timer_value,
@@ -20,7 +19,7 @@ module timer #(
 
     always @(posedge clk) begin
 
-        if (stop)  begin 
+        if (enable == 0)  begin 
             count <= start_value ;
             count_cycles <=0 ;
         end 
