@@ -5,19 +5,28 @@ module timer #(
     parameter CLKS_PER_MS = 50000 // What is the number of clock cycles in a millisecond?
 ) (
     input                       clk,
-    input  [$clog2(MAX_MS)-1:0] start_value, // What does the $clog2() function do here?
+    input                 [1:0] level, // What does the $clog2() function do here?
     input                       enable,
-    output  [$clog2(MAX_MS)-1:0] timer_value,
+    output  [$clog2(MAX_MS)-1:0] timer_value
 );
     reg [$clog2(CLKS_PER_MS)-1:0] count_cycles;
     reg [$clog2(MAX_MS)-1:0]      count;
-    reg over;
-    reg [$clog2(MAX_MS)-1:0] timer;
+    reg [$clog2(MAX_MS)-1:0] start_value;
 
     assign timer_value = count;
 
+    always @(*) begin
+        case (level)
+            2'd1:    start_value = 1000;    // 1 second
+            2'd2:    start_value = 500;   // 25 seconds
+            2'd3:    start_value = 250;  // 300 seconds
+            default: start_value = 1000;   // 30 seconds
+        endcase
+    end
 
+    /* verilator lint_off SYNCASYNCNET */
     always @(posedge clk) begin
+
 
         if (enable == 0)  begin 
             count <= start_value ;
@@ -33,8 +42,8 @@ module timer #(
             end 
         end 
     end
+    /* verilator lint_on SYNCASYNCNET */
 endmodule 
-
 
 
 
