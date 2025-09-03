@@ -35,7 +35,8 @@ module whac_a_mole_fsm (
     input               timeout,
     input               reset_button_pressed,         // Reset button
     input               level_select,
-    input               switchx,
+    input               [21:0] num_switch
+    input               [17:0] led_number
     output logic        ledx,
     output logic        ready_for_mole,
     output logic        timeout_start,
@@ -169,4 +170,5 @@ always_comb begin : whac_a_mole_fsm_output
 end
 
 endmodule
+
 
