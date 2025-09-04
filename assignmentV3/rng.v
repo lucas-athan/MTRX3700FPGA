@@ -9,7 +9,7 @@ module rng #(
     input  wire clk,
     input  wire rst,
     input  wire [1:0] level,   // 00 -> LVL0, 01 -> LVL1, 10 -> LVL2
-    output reg  [$clog2(LED_COUNT)-1:0] led_index,
+    output reg  [4:0] led_index,
     output reg  led_request
 );
     // 5-bit LFSR
@@ -21,6 +21,7 @@ module rng #(
 
     always @(posedge clk) begin
         case(level)
+            2'b00: number_of_cycles = LVL0;
             2'b01: number_of_cycles = LVL1;
             2'b10: number_of_cycles = LVL2;
             default: number_of_cycles = LVL0;
@@ -36,22 +37,17 @@ module rng #(
         end 
         else begin
             led_request <= 0;  // default low
+            lfsr <= {lfsr[3:0], feedback}; // update lfsr
+
+
 
             // If cycle_counter has reached trigger_cycle send signal out
             if (cycle_counter == number_of_cycles - 1) begin
-                cycle_counter <= 0;
-
-                // Use concatenation to shift LFSR left and put feedback at bit 0
-                lfsr <= {lfsr[3:0], feedback};
-
-                // map LFSR output to LED range (0 to 17)
+                cycle_counter <= 0;                
                 led_index <= lfsr % LED_COUNT;
-
-                // send request to turn led on
                 led_request <= 1;
             end
 
-            // Else just increment cycle counter
             else begin
                 cycle_counter <= cycle_counter + 1;
             end

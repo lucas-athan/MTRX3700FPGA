@@ -1,14 +1,14 @@
 // score_display.v
 module score_display (
-    input  wire [12:0] SCORE,     // 0–255 from switches.v
-    output wire [6:0] HEX0,      // ones digit
-    output wire [6:0] HEX1,      // tens digit
-    output wire [6:0] HEX2,      // hund digit
-    output reg  [6:0] HEX3,      // 'E'
-    output reg  [6:0] HEX4,      // 'R'
-    output reg  [6:0] HEX5,      // 'O'
-    output reg  [6:0] HEX6,      // 'C'
-    output reg  [6:0] HEX7       // 'S'
+    input  wire [11:0] score,     // 0–255 from switches.v
+    output wire [6:0] hex0,      // ones digit
+    output wire [6:0] hex1,      // tens digit
+    output wire [6:0] hex2,      // hund digit
+    output reg [6:0] hex3,      // 'E'
+    output reg [6:0] hex4,      // 'R'
+    output reg [6:0] hex5,      // 'O'
+    output reg [6:0] hex6,      // 'C'
+    output reg [6:0] hex7       // 'S'
 );
 
     // Seven seg wires
@@ -22,16 +22,16 @@ module score_display (
     reg [3:0] hund;
 
     always @(*) begin
-        ones = SCORE [3:0];
-        tens = SCORE [7:4];
-        hund = SCORE [11:8];
+        ones = score [3:0];
+        tens = score [7:4];
+        hund = score [11:8];
 
-        // Static "SCORE"
-        HEX7 = 7'b0010010; // S
-        HEX6 = 7'b1000110; // C
-        HEX5 = 7'b1000000; // O
-        HEX4 = 7'b1001110; // R
-        HEX3 = 7'b0000110; // E
+        // Static "score"
+        hex7 = 7'b0010010; // S
+        hex6 = 7'b1000110; // C
+        hex5 = 7'b1000000; // O
+        hex4 = 7'b1001110; // R
+        hex3 = 7'b0000110; // E
     end
 
     // Instantiate three 7-seg drivers
@@ -39,9 +39,9 @@ module score_display (
     seven_seg seg1 (.bcd(tens), .segments(hex1_segments));
     seven_seg seg2 (.bcd(hund), .segments(hex2_segments));
 
-    assign HEX0 = hex0_segments;
-    assign HEX1 = hex1_segments;
-    assign HEX2 = hex2_segments;
+    assign hex0 = hex0_segments;
+    assign hex1 = hex1_segments;
+    assign hex2 = hex2_segments;
 
 endmodule
 
@@ -62,7 +62,7 @@ module seven_seg (
             4'b0111: segments = 7'b1111000; // 7
             4'b1000: segments = 7'b0000000; // 8
             4'b1001: segments = 7'b0010000; // 9
-            default: segments = 7'b1111111; // OFF
+            default: segments = 7'b1000000; // OFF
         endcase
     end
 

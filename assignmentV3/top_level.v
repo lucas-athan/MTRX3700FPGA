@@ -18,8 +18,7 @@ module top_level (
   wire rand_request;          // Dummy variable: send request to turn LED on
   reg [1:0] difficulty;       // Difficulty passed from button -> RNG module
 
-  wire [17:0] led_from_leds;  // raw LEDs from leds.v
-  wire [17:0] led_final;      // LEDs after switch logic
+  wire [17:0] leds;           // LEDs after switch logic
   wire [11:0] score;          // player score
 
   wire rst, but1, but2, but3;      // Wires for debounced button signals
@@ -32,10 +31,11 @@ module top_level (
 
   // Difficulty logic
   always @(posedge CLOCK_50) begin
-    if (rst)       difficulty <= 2'b00;
-    else if (but1) difficulty <= 2'b00;
-    else if (but2) difficulty <= 2'b01;
-    else if (but3) difficulty <= 2'b10;
+    if (rst)        difficulty <= 2'b00;
+    else if (but1)  difficulty <= 2'b00;
+    else if (but2)  difficulty <= 2'b01;
+    else if (but3)  difficulty <= 2'b10;
+    else            difficulty <= 2'b00;
   end
 
   // RNG module
@@ -48,37 +48,29 @@ module top_level (
   );
 
   // LED timer controller
-  leds leds_inst (
+  leds_switches leds_inst (
     .clk(CLOCK_50),
     .rst(rst),
     .led_index(rand_index),
     .led_request(rand_request),
-    .LEDR(led_from_leds)
-  );
-
-  // Switch Logic
-  switches switches_inst (
-    .clk(CLOCK_50),
-    .rst(rst),
-    .led_in(led_from_leds),
-    .sw(SW),
-    .led_out(led_final),
+    .switches(SW),
+    .leds(leds),
     .score(score)
   );
 
-  assign LEDR = game_on ? led_final : 18'b0;
+  assign LEDR = leds;
 
   // Score
   score_display score_inst (
-    .SCORE(game_on ? score : 8'd0),
-    .HEX0(HEX0),
-    .HEX1(HEX1),
-    .HEX2(HEX2),
-    .HEX3(HEX3),
-    .HEX4(HEX4),
-    .HEX5(HEX5),
-    .HEX6(HEX6),
-    .HEX7(HEX7)
+    .score(score),
+    .hex0(HEX0),
+    .hex1(HEX1),
+    .hex2(HEX2),
+    .hex3(HEX3),
+    .hex4(HEX4),
+    .hex5(HEX5),
+    .hex6(HEX6),
+    .hex7(HEX7)
   );
 
 endmodule
