@@ -1,7 +1,7 @@
 module rng #(
     parameter OFFSET=200,
     parameter MAX_VALUE=1223,
-    parameter SEED= 1/*Fill-In*/ // Choose a random number seed here!
+    parameter SEED= 42/*Fill-In*/ // Choose a random number seed here!
 ) (
     input clk,
     output [$clog2(MAX_VALUE)-1:0] random_value // 11-bits for values 200 to 1223.
